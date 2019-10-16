@@ -3,6 +3,10 @@
 
 <mapper namespace="com.colourful.chat_with_u.dao.UserDao">
     <select id="findByUsername"  resultType="com.colourful.chat_with_u.vo.User">
-          SELECT username,password FROM user WHERE username=#{username}
+          SELECT username,password,authority FROM user WHERE username=#{username}
     </select>
+    
+    <insert id="addUser">
+        INSERT INTO user(username, password, authority) VALUES (#{username},#{password},'USER')
+    </insert>
 </mapper>
