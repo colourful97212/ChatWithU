@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <button onclick="connect()">上线</button>
+    发送给：<input type="text" id="toUser" disabled>
+    内容为：<input type="text" id="content" disabled>
+    <button id="btn" onclick="send()" disabled>发送</button>
+</body>
+<script>
+    var webSocket;
+    function connect() {
+        var username = localStorage.getItem("username");
+        webSocket = new WebSocket('ws://localhost:8080/websocket/'+username);
+        webSocket.onopen = function () {
+            document.getElementById("toUser").removeAttribute("disabled");
+            document.getElementById("content").removeAttribute("disabled");
+            document.getElementById("btn").removeAttribute("disabled");
+        };
+        webSocket.onerror = function () {
+            console.log("error")
+        };
+        webSocket.onclose = function () {
+            console.log("close")
+        };
+        webSocket.onmessage = function (event) {
+            console.log(event.data)
+        }
+    }
+
+</script>
+</html>
