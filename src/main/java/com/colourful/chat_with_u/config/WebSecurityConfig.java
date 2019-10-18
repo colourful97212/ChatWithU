@@ -1,5 +1,6 @@
 package com.colourful.chat_with_u.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +15,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 {
 /*    @Autowired
     private MyUserService myUserService;*/
+    @Autowired
+    private MyLogoutSuccessHandler myLogoutSuccessHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception
@@ -31,15 +34,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                     .loginProcessingUrl("/login")
                     .defaultSuccessUrl("/Test.html"); // 设置默认登录成功后跳转的页面*/
      http.formLogin()                    //  定义当需要用户登录时候，转到的登录页面。
-            .loginPage("/login.html")
-            .loginProcessingUrl("/login")
-            .and()
-            .authorizeRequests()        // 定义哪些URL需要被保护、哪些不需要被保护
-            .antMatchers("/*").permitAll()     // 设置所有人都可以访问登录页面
-            .anyRequest()               // 任何请求,登录后可以访问
-            .authenticated()
-            .and()
-            .csrf().disable();          // 关闭csrf防护
+             .loginPage("/login.html")
+             .loginProcessingUrl("/login")
+             .defaultSuccessUrl("/protected/Communication.html")
+             .and()
+             .authorizeRequests()        // 定义哪些URL需要被保护、哪些不需要被保护
+             .antMatchers("/*").permitAll()     // 设置所有人都可以访问登录页面
+             .anyRequest()               // 任何请求,登录后可以访问
+             .authenticated()
+             .and()
+             .csrf().disable()           // 关闭csrf防护
+             .logout()
+             .logoutUrl("/logout")
+             .logoutSuccessHandler(myLogoutSuccessHandler)
+             .deleteCookies("JSESSIONID")
+             .permitAll();
+
     }
 
     // BrowerSecurityConfig

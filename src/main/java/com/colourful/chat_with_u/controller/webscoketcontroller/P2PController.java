@@ -38,8 +38,6 @@ public class P2PController
         this.username = username;
         onLineMap.put(username,session);
         onLineCount ++;
-        System.out.println(outLineMessageMap);
-        System.out.println(username);
         if (outLineMessageMap.containsKey(username))
         {
             log.info("该用户拥有未读消息队列");
@@ -107,4 +105,5 @@ public class P2PController
         System.out.println("websocket发生错误");
         error.printStackTrace();
     }
+
 }

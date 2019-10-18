@@ -3,26 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        .button {
+            font: bold 11px Arial;
+            text-decoration: none;
+            background-color: #EEEEEE;
+            color: #333333;
+            padding: 2px 6px 2px 6px;
+            border-top: 1px solid #CCCCCC;
+            border-right: 1px solid #333333;
+            border-bottom: 1px solid #333333;
+            border-left: 1px solid #CCCCCC;
+        }
+    </style>
 </head>
 <body>
-    <button onclick="connect()">上线</button>
-    发送给：<input type="text" id="toUser" disabled>
-    内容为：<input type="text" id="content" disabled>
-    <button id="btn" onclick="send()" disabled>发送</button>
     <div id="chat">
-        <p id="front"></p>
     </div>
+    <button onclick="connect()" id="on">上线</button>
+    <a href="/logout" class="button">登出</a></body>
+    <br>
+    发送给：<input type="text" id="toUser" disabled>
+    <br>
+    内容为：<input type="text" id="content" disabled>
+    <br>
+    <button id="btn" onclick="send()" disabled>发送</button>
 </body>
 <script>
     var webSocket;
+    var username = localStorage.getItem("username");
     function connect() {
-        var username = localStorage.getItem("username");
         webSocket = new WebSocket('ws://localhost:8080/websocket/'+username);
         webSocket.onopen = function () {
-            document.getElementById("toUser").removeAttribute("disabled");
-            document.getElementById("content").removeAttribute("disabled");
-            document.getElementById("btn").removeAttribute("disabled");
-            console.log("Success")
+            document.getElementById("toUser").disabled = false;
+            document.getElementById("content").disabled = false;
+            document.getElementById("btn").disabled = false;
+            document.getElementById("on").disabled = true;
         };
         webSocket.onerror = function () {
             console.log("error")
@@ -32,9 +48,10 @@
         };
         webSocket.onmessage = function (message) {
             var jsonObj = JSON.parse(message.data);
-            console.log(message.data);
-          /*  var newNode = "<p>"++"</p>"
-            document.getElementById("chat").appendChild()*/
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.appendChild(document.createTextNode(jsonObj.fromUser+"对你说： "+jsonObj.message));
+            document.getElementById("chat").appendChild(p);
         }
     }
 
@@ -46,8 +63,11 @@
             "toUser" : toUser
         };
         document.getElementById("content").value = "";
-        document.getElementById("toUser").value = "";
         webSocket.send(JSON.stringify(data));
+        var p = document.createElement('p');
+        p.style.wordWrap = 'break-word';
+        p.appendChild(document.createTextNode("你说对"+toUser+"说： "+content));
+        document.getElementById("chat").appendChild(p);
     }
 
 </script>
