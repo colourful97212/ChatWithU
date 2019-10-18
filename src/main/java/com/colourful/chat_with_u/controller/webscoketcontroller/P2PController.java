@@ -22,7 +22,7 @@ public class P2PController
 
     //concurrent包的线程安全Map，用来存放每个客户端对应的MyWebSocket对象。
     //用户上线后，保存用户在线的Session，若此map中找不到用户的用户名和sesion说明该用户未上线
-    private static ConcurrentHashMap<String , Session> onLineMap = new ConcurrentHashMap<>();
+    protected static ConcurrentHashMap<String , Session> onLineMap = new ConcurrentHashMap<>();
 
     private static ConcurrentHashMap<String , CopyOnWriteArrayList<String>> outLineMessageMap = new ConcurrentHashMap<>();
 
@@ -57,7 +57,8 @@ public class P2PController
     }
 
     @OnClose
-    public void onClose(@PathParam("username") String username) {
+    public void onClose(@PathParam("username") String username)
+    {
         onLineMap.remove(username); // 从set中删除
         onLineCount --; // 在线数减1
         log.info("当前在线人数:{}",onLineCount);
@@ -71,15 +72,29 @@ public class P2PController
         String toUser = data.getString("toUser");
         String content = data.getString("content");
         Message msg = new Message()
-                .setMessage(content)
+                .setContent(content)
                 .setFromUser(username)
                 .setToUser(toUser);
+
+        sendMessage(msg,toUser);
+    }
+
+    @OnError
+    public void onError(Throwable error)
+    {
+        System.out.println("websocket发生错误");
+        error.printStackTrace();
+    }
+
+
+    protected static void sendMessage(Message msg,String toUser) throws IOException
+    {
         String JsonString = JSON.toJSONString(msg);
         if (onLineMap.containsKey(toUser))
         {
             Session session = onLineMap.get(toUser);
             session.getBasicRemote().sendText(JsonString);
-            log.info("用户在线,消息已发送给用户"+toUser+"内容为："+content);
+            log.info("用户在线,消息已发送给用户"+toUser+"内容为："+msg.getContent());
         }
         else
         {
@@ -96,14 +111,6 @@ public class P2PController
                 outLineMessageMap.put(toUser,msgList);
                 log.info("用户不在线，未拥有未读消息队列，已创建未读消息队列，消息已加入未读队列");
             }
-
         }
     }
-
-    @OnError
-    public void onError(Throwable error) {
-        System.out.println("websocket发生错误");
-        error.printStackTrace();
-    }
-
 }

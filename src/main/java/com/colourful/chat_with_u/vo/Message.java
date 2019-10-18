@@ -10,5 +10,5 @@ public class Message
 {
     private String toUser;
     private String fromUser;
-    private String message;
+    private String content;
 }

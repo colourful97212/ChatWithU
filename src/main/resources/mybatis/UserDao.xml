@@ -9,4 +9,8 @@
     <insert id="addUser">
         INSERT INTO user(username, password, authority) VALUES (#{username},#{password},'USER')
     </insert>
+
+    <select id="findAll" resultType="com.colourful.chat_with_u.vo.User">
+          SELECT * FROM user
+    </select>
 </mapper>

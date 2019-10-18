@@ -3,6 +3,8 @@ package com.colourful.chat_with_u.dao;
 import com.colourful.chat_with_u.vo.User;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 
 public interface UserDao
 {
@@ -20,4 +22,10 @@ public interface UserDao
      * @return 受影响的行数
      */
     Integer addUser(@Param("username") String username,@Param("password") String password);
+
+    /**
+     * 找所有的用户
+     * @return 集合
+     */
+    List<User> findAll();
 }
