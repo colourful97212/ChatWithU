@@ -9,6 +9,9 @@
     发送给：<input type="text" id="toUser" disabled>
     内容为：<input type="text" id="content" disabled>
     <button id="btn" onclick="send()" disabled>发送</button>
+    <div id="chat">
+        <p id="front"></p>
+    </div>
 </body>
 <script>
     var webSocket;
@@ -19,6 +22,7 @@
             document.getElementById("toUser").removeAttribute("disabled");
             document.getElementById("content").removeAttribute("disabled");
             document.getElementById("btn").removeAttribute("disabled");
+            console.log("Success")
         };
         webSocket.onerror = function () {
             console.log("error")
@@ -26,9 +30,24 @@
         webSocket.onclose = function () {
             console.log("close")
         };
-        webSocket.onmessage = function (event) {
-            console.log(event.data)
+        webSocket.onmessage = function (message) {
+            var jsonObj = JSON.parse(message.data);
+            console.log(message.data);
+          /*  var newNode = "<p>"++"</p>"
+            document.getElementById("chat").appendChild()*/
         }
+    }
+
+    function send() {
+        var content = document.getElementById("content").value;
+        var toUser = document.getElementById("toUser").value;
+        var data = {
+            "content" : content,
+            "toUser" : toUser
+        };
+        document.getElementById("content").value = "";
+        document.getElementById("toUser").value = "";
+        webSocket.send(JSON.stringify(data));
     }
 
 </script>

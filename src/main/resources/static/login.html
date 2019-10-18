@@ -10,14 +10,14 @@
     <table>
         <tr>
             <td>用户名：</td>
-            <td><input type="text" name="username"></td>
+            <td><input id="username" type="text" name="username"></td>
         </tr>
         <tr>
             <td>密码：</td>
             <td><input type="password" name="password"></td>
         </tr>
         <tr>
-            <td colspan="2"><button type="submit">登录</button></td>
+            <td colspan="2"><button type="submit" onclick="log()">登录</button></td>
         </tr>
         <tr>
             <td colspan="2"><a type="button" href="register.html">注册</a></td>
@@ -25,4 +25,10 @@
     </table>
 </form>
 </body>
+<script>
+    function log() {
+        var username = document.getElementById("username").value;
+        localStorage.setItem("username",username);
+    }
+</script>
 </html>
