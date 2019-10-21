@@ -76,7 +76,7 @@ public class P2PController
                 .setFromUser(username)
                 .setToUser(toUser);
 
-        sendMessage(msg,toUser);
+        sendMessage(msg);
     }
 
     @OnError
@@ -86,15 +86,32 @@ public class P2PController
         error.printStackTrace();
     }
 
-
-    protected static void sendMessage(Message msg,String toUser) throws IOException
+    /**
+     * 消息发送方法，若用户在线直接发送，不在线则添加到用户未读消息中
+     * @param msg Message对象实例
+     * @throws IOException
+     */
+    protected static void sendMessage(Message msg) throws IOException
     {
         String JsonString = JSON.toJSONString(msg);
+        String toUser = msg.getToUser();
+        sendMsg(JsonString,toUser,msg);
+    }
+
+    /**
+     * 抽离得方法
+     * @param JsonString Json对象
+     * @param toUser 发送给的用户
+     * @param msg 消息对象
+     * @throws IOException
+     */
+    private static void sendMsg(String JsonString, String toUser,Message msg) throws IOException
+    {
         if (onLineMap.containsKey(toUser))
         {
             Session session = onLineMap.get(toUser);
             session.getBasicRemote().sendText(JsonString);
-            log.info("用户在线,消息已发送给用户"+toUser+"内容为："+msg.getContent());
+            log.info("用户在线,消息已发送给用户"+toUser+"内容为："+msg.getContent()+",消息来自："+msg.getFromUser());
         }
         else
         {
@@ -112,5 +129,18 @@ public class P2PController
                 log.info("用户不在线，未拥有未读消息队列，已创建未读消息队列，消息已加入未读队列");
             }
         }
+    }
+
+    /**
+     * 供超级用户推送使用的方法，需要遍历得所有用户名，然后作为参数toUser发送至用户
+     * @param msg 消息对象
+     * @param toUser 发送给的用户
+     * @throws IOException
+     */
+    protected static void sendMessage(Message msg,String toUser) throws IOException
+    {
+        msg.setToUser(toUser);
+        String JsonString = JSON.toJSONString(msg);
+        sendMsg(JsonString,toUser,msg);
     }
 }

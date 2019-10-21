@@ -22,13 +22,22 @@ import java.util.List;
 @ServerEndpoint("/root/all")
 public class PushController
 {
+    /**
+     * 因为spring管理的都是单例（singleton），和 websocket （多对象）相冲突，所以会注入是失败报错空指针
+     * 因此采用如下方法注入UserDao
+     */
+    private static UserDao userDao;
+
     @Autowired
-    private UserDao userDao;
+    public void setUserDao(UserDao userDao)
+    {
+        PushController.userDao = userDao;
+    }
 
     @OnOpen
-    public void onOnpen()
+    public void onOpen()
     {
-        log.info("超级拥有连接");
+        log.info("超级用户连接");
     }
 
     @OnClose
@@ -42,7 +51,7 @@ public class PushController
     {
         JSONObject data = JSON.parseObject(message);
         String content = data.getString("content");
-        Message msg = new Message().setContent(content);
+        Message msg = new Message().setContent(content).setFromUser("管理员");
         List<User> list = userDao.findAll();
         for (User user : list){
             String username = user.getUsername();

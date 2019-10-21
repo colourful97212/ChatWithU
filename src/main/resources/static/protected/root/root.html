@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="chat">
+    </div>
+    通知内容：<input type="text" id="content">
+    <button onclick="push()">推送</button>
+</body>
+<script>
+    var webSocket;
+    window.onload = function () {
+        webSocket = new WebSocket("ws://localhost:8080/root/all");
+        webSocket.onopen = function () {
+            console.log("Success")
+        };
+        webSocket.onerror = function () {
+            console.log("error")
+        };
+        webSocket.onclose = function () {
+            console.log("close")
+        };
+        webSocket.onmessage = function (message) {
+            console.log(message.data)
+        }
+    };
+    function push() {
+        var content = document.getElementById("content").value;
+        var data = {
+            "content" : content
+        };
+        document.getElementById("content").value = "";
+        webSocket.send(JSON.stringify(data));
+        var p = document.createElement('p');
+        p.style.wordWrap = 'break-word';
+        p.appendChild(document.createTextNode("你对所有用户发起通知： "+content));
+        document.getElementById("chat").appendChild(p);
+    }
+</script>
+</html>

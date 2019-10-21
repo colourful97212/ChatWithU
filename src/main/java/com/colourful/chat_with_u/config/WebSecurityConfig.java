@@ -36,10 +36,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
      http.formLogin()                    //  定义当需要用户登录时候，转到的登录页面。
              .loginPage("/login.html")
              .loginProcessingUrl("/login")
-             .defaultSuccessUrl("/protected/Communication.html")
+             .defaultSuccessUrl("/protected/user/Communication.html")
              .and()
              .authorizeRequests()        // 定义哪些URL需要被保护、哪些不需要被保护
              .antMatchers("/*").permitAll()     // 设置所有人都可以访问登录页面
+             .antMatchers("/protected/user/**").hasAnyRole("USER") // 需要具有ROLE_USER角色才能访问
+             .antMatchers("/protected/root/**").hasAnyRole("ROOT") // 需要具有ROLE_USER角色才能访问
              .anyRequest()               // 任何请求,登录后可以访问
              .authenticated()
              .and()
@@ -48,7 +50,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
              .logoutUrl("/logout")
              .logoutSuccessHandler(myLogoutSuccessHandler)
              .deleteCookies("JSESSIONID")
-             .permitAll();
+             .permitAll()
+             ;
 
     }
 

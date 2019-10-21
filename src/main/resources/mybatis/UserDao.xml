@@ -7,7 +7,7 @@
     </select>
     
     <insert id="addUser">
-        INSERT INTO user(username, password, authority) VALUES (#{username},#{password},'USER')
+        INSERT INTO user(username, password, authority) VALUES (#{username},#{password},'ROLE_USER')
     </insert>
 
     <select id="findAll" resultType="com.colourful.chat_with_u.vo.User">

@@ -47,10 +47,11 @@
             console.log("close")
         };
         webSocket.onmessage = function (message) {
+            console.log(message)
             var jsonObj = JSON.parse(message.data);
             var p = document.createElement('p');
             p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(jsonObj.fromUser+"对你说： "+jsonObj.message));
+            p.appendChild(document.createTextNode(jsonObj.fromUser+"对你说： "+jsonObj.content));
             document.getElementById("chat").appendChild(p);
         }
     }
@@ -66,7 +67,7 @@
         webSocket.send(JSON.stringify(data));
         var p = document.createElement('p');
         p.style.wordWrap = 'break-word';
-        p.appendChild(document.createTextNode("你说对"+toUser+"说： "+content));
+        p.appendChild(document.createTextNode("你对"+toUser+"说： "+content));
         document.getElementById("chat").appendChild(p);
     }
 
