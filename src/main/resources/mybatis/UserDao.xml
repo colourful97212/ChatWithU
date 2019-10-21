@@ -3,7 +3,7 @@
 
 <mapper namespace="com.colourful.chat_with_u.dao.UserDao">
     <select id="findByUsername"  resultType="com.colourful.chat_with_u.vo.User">
-          SELECT username,password,authority FROM user WHERE username=#{username}
+        SELECT username,password,authority FROM user WHERE username=#{username}
     </select>
     
     <insert id="addUser">
@@ -11,6 +11,31 @@
     </insert>
 
     <select id="findAll" resultType="com.colourful.chat_with_u.vo.User">
-          SELECT * FROM user
+        SELECT * FROM user
     </select>
+
+    <select id="findFriends" resultType="com.colourful.chat_with_u.vo.User">
+        SELECT * FROM user WHERE id IN
+        (
+          SELECT userId2 FROM friends WHERE userId1 = ( SELECT id FROM user WHERE username = #{username} )
+        UNION
+          SELECT userId1 FROM friends WHERE userId2 = ( SELECT id FROM user WHERE username = #{username} )
+        )
+    </select>
+
+    <insert id="addFriend">
+        INSERT INTO friends(userId1, userId2) VALUES (#{username1},#{username2})
+    </insert>
+
+    <delete id="removeFriend">
+        DELETE FROM friends WHERE
+        (
+        userId2 =
+        (SELECT id FROM user WHERE username = #{username1}) AND userId1 = (SELECT id FROM user WHERE username = #{username2})
+        )
+        OR
+        (userId1 =
+        (SELECT id FROM user WHERE username = #{username1}) AND userId2 = (SELECT id FROM user WHERE username = #{username2})
+        )
+    </delete>
 </mapper>

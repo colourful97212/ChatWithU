@@ -28,4 +28,27 @@ public interface UserDao
      * @return 集合
      */
     List<User> findAll();
+
+    /**
+     * 通过username来找与该用户具有好友关系的人
+     * @param username 需要查找朋友的用户
+     * @return 返回查到的所有用户
+     */
+    List<User> findFriends(@Param("username") String username);
+
+    /**
+     * 添加两位用户的好友关系
+     * @param username1 两位要建立好友关系的用户
+     * @param username2 两位要建立好友关系的用户
+     * @return 返回受影响的行数
+     */
+    Integer addFriend(@Param("username1")String username1,@Param("username2") String username2);
+
+    /**
+     * 解除好友关系
+     * @param username1 两个用户
+     * @param username2 两个用户
+     * @return 返回受影响的行数
+     */
+    Integer removeFriend(@Param("username1") String username1,@Param("username2") String username2);
 }
