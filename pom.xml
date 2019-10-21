@@ -93,6 +93,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.colourful.chat_with_u.ChatWithUApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
