@@ -16,4 +16,5 @@ public class Message
     public static final Integer MESSAGE = 1;
     public static final Integer NOTICE = 2;
     public static final Integer FRIEND_REQUEST = 3;
+    public static final Integer FRIEND_RESPONSE = 4;
 }

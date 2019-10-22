@@ -96,7 +96,7 @@ public class P2PController
         {
             log.info("非好友关系，请先添加对方为好友");
             Message msg = new Message()
-                    .setFromUser("系统提醒")
+                   /* .setFromUser("系统提醒")*/
                     .setToUser(username)
                     .setContent("您与该用户当前非好友关系，请先添加该用户为好友后再发送消息")
                     .setType(Message.NOTICE);

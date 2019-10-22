@@ -31,8 +31,8 @@
     <button id="btn" onclick="send()" disabled>发送</button>
     <br>
 
-    添加：<input type="text" id="friend">为好友<br>
-    <button onclick="addFriend()">添加点此</button>
+    添加：<input type="text" id="friend" disabled>为好友<br>
+    <button id="add_friend_btn" onclick="addFriend()" disabled>添加点此</button>
 </body>
 <script>
     var webSocket;
@@ -44,6 +44,8 @@
             document.getElementById("content").disabled = false;
             document.getElementById("btn").disabled = false;
             document.getElementById("on").disabled = true;
+            document.getElementById("add_friend_btn").disabled = false;
+            document.getElementById("friend").disabled = false;
         };
         webSocket.onerror = function () {
             console.log("error")
@@ -52,13 +54,40 @@
             console.log("close")
         };
         webSocket.onmessage = function (message) {
-            console.log(message)
             var jsonObj = JSON.parse(message.data);
-            var p = document.createElement('p');
-            p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(jsonObj.fromUser+"对你说： "+jsonObj.content));
-            document.getElementById("chat").appendChild(p);
+            if (jsonObj.type === 1)
+            {
+                var p = document.createElement('p');
+                p.style.wordWrap = 'break-word';
+                p.appendChild(document.createTextNode(jsonObj.fromUser+"对你说： "+jsonObj.content));
+                document.getElementById("chat").appendChild(p);
+            }
+            else if (jsonObj.type === 2 || jsonObj.type ===4)
+            {
+                alert("系统通知："+jsonObj.content)
+            }
+            else if (jsonObj.type === 3)
+            {
+                var isTrue = confirm(jsonObj.content);
+                friendAjax(jsonObj.fromUser , isTrue)
+            }
         }
+    }
+
+    function friendAjax(who , isTrue) {
+        $.ajax({
+            type:"post",
+            url:"http://localhost:8080/protected/user/responseRequest",
+            dataType:"json",
+            data:{
+                username:username,
+                who:who,
+                isTrue:isTrue
+            },
+            success:function (res) {
+
+            }
+        })
     }
 
     function send() {

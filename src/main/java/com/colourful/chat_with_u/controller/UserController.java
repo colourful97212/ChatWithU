@@ -4,6 +4,8 @@ import com.colourful.chat_with_u.controller.webscoketcontroller.P2PController;
 import com.colourful.chat_with_u.service.UserService;
 import com.colourful.chat_with_u.utils.JsonResult;
 import com.colourful.chat_with_u.vo.Message;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
+@Slf4j
 @RestController
 public class UserController
 {
@@ -52,7 +55,7 @@ public class UserController
     {
         Message msg = new Message()
                 .setToUser(friend)
-                .setFromUser("系统提醒")
+                .setFromUser(username)
                 .setContent(username+"请求添加您为好友")
                 .setType(Message.FRIEND_REQUEST);
         P2PController.sendMessage(msg);
@@ -64,5 +67,54 @@ public class UserController
         return new JsonResult()
                 .setMessage("好友请求已发送给"+friend)
                 .setCode(200);
+    }
+
+    @RequestMapping(value = "/protected/user/responseRequest",method = RequestMethod.POST)
+    public JsonResult responseRequest(@RequestParam("username")String username,
+                                      @RequestParam("who") String who,
+                                      @RequestParam("isTrue") Boolean isTrue) throws IOException
+    {
+        if (isTrue)
+        {
+            if (userService.addFriend(username,who))
+            {
+                log.info(username+"同意"+who+"的好友请求");
+                Message msg = new Message()
+                        .setType(Message.FRIEND_RESPONSE)
+                        .setContent(username+"已接受了您的好友请求")
+                        .setToUser(who)
+                        .setFromUser(username);
+                P2PController.sendMessage(msg);
+                return new JsonResult()
+                        .setCode(200)
+                        .setMessage("您已成功添加"+who+"为好友");
+            }
+            else
+            {
+                log.info(username+"与"+who+"建立好友关系失败");
+                Message msg = new Message()
+                        .setType(Message.FRIEND_RESPONSE)
+                        .setContent("出现系统错误，请重新尝试添加"+username+"为您的好友，或请与管理员取得联系")
+                        .setToUser(who)
+                        .setFromUser(username);
+                P2PController.sendMessage(msg);
+                return new JsonResult()
+                        .setCode(200)
+                        .setMessage("未知错误，建立好友关系失败");
+            }
+        }
+        else
+        {
+            log.info(username+"拒绝"+who+"的好友请求");
+            Message msg = new Message()
+                    .setType(Message.FRIEND_RESPONSE)
+                    .setContent(username+"已拒绝了您的好友请求")
+                    .setToUser(who)
+                    .setFromUser(username);
+            P2PController.sendMessage(msg);
+            return new JsonResult()
+                    .setCode(200)
+                    .setMessage("您已拒绝"+who+"的好友请求");
+        }
     }
 }

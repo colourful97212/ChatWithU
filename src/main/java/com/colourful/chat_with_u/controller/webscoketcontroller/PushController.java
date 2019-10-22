@@ -53,7 +53,7 @@ public class PushController
         String content = data.getString("content");
         Message msg = new Message()
                 .setContent(content)
-                .setFromUser("管理员")
+/*                .setFromUser("管理员")*/
                 .setType(Message.NOTICE);
         List<User> list = userDao.findAll();
         for (User user : list){
