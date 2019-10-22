@@ -51,7 +51,10 @@ public class PushController
     {
         JSONObject data = JSON.parseObject(message);
         String content = data.getString("content");
-        Message msg = new Message().setContent(content).setFromUser("管理员");
+        Message msg = new Message()
+                .setContent(content)
+                .setFromUser("管理员")
+                .setType(Message.NOTICE);
         List<User> list = userDao.findAll();
         for (User user : list){
             String username = user.getUsername();

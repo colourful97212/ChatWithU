@@ -52,28 +52,29 @@ public class UserServiceImpl implements UserService
      * @return
      */
     @Override
-    public Integer addFriend(String username1, String username2)
+    public Boolean addFriend(String username1, String username2)
     {
         int row;
-        if(userDao.isFriend(username1,username2) == 0)
+        if(!isFriends(username1,username2))
         {
             log.info(username1+"与"+username2+"非好友关系");
             row = userDao.addFriend(username1,username2);
             if (row == 1)
             {
                 log.info("添加好友关系成功");
+                return true;
             }
             else
             {
                 log.info("添加好友关系失败");
+                return false;
             }
         }
         else
         {
             log.info(username1+"与"+username2+"已经是好友关系，不可重复添加好友关系");
-            row = 0;
+            return false;
         }
-        return row;
     }
 
     /**
@@ -83,27 +84,42 @@ public class UserServiceImpl implements UserService
      * @return
      */
     @Override
-    public Integer removeFriend(String username1, String username2)
+    public Boolean removeFriend(String username1, String username2)
     {
         int row;
-        if(userDao.isFriend(username1,username2) != 0)
+        if(isFriends(username1,username2))
         {
             log.info(username1+"与"+username2+"是好友关系");
             row = userDao.removeFriend(username1,username2);
             if (row == 1)
             {
                 log.info("解除好友关系成功");
+                return true;
             }
             else
             {
                 log.info("解除好友关系失败");
+                return false;
             }
         }
         else
         {
             log.info(username1+"与"+username2+"非好友关系，不可解除非好友关系");
-            row = 0;
+            return false;
         }
-        return row;
     }
+
+    /**
+     * 是否为好友关系
+     * @param username1
+     * @param username2
+     * @return
+     */
+    @Override
+    public Boolean isFriends(String username1, String username2)
+    {
+        return userDao.isFriend(username1, username2) != 0;
+    }
+
+
 }

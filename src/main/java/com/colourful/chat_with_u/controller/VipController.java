@@ -29,7 +29,7 @@ public class VipController
     public void ggg(){
         /*Integer bo = userDao.isFriend("root","阿起");
         System.out.println(bo);*/
-        Integer row = userService.addFriend("root","阿秃");
-        System.out.println(row);
+/*        Integer row = userService.addFriend("root","阿秃");
+        System.out.println(row);*/
     }
 }

@@ -2,8 +2,10 @@ package com.colourful.chat_with_u.controller.webscoketcontroller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.colourful.chat_with_u.service.UserService;
 import com.colourful.chat_with_u.vo.Message;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
@@ -17,6 +19,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @ServerEndpoint(value = "/websocket/{username}")
 public class P2PController
 {
+    /**
+     * 因为spring管理的都是单例（singleton），和 websocket （多对象）相冲突，所以会注入是失败报错空指针
+     * 因此采用如下方法注入UserService
+     */
+    private static UserService userService;
+    @Autowired
+    public void setUserService(UserService userService)
+    {
+        P2PController.userService = userService;
+    }
+
     private static int onLineCount = 0;//在线人数
 
     //concurrent包的线程安全Map，用来存放每个客户端对应的MyWebSocket对象。
@@ -70,12 +83,25 @@ public class P2PController
         JSONObject data = JSON.parseObject(message);
         String toUser = data.getString("toUser");
         String content = data.getString("content");
-        Message msg = new Message()
-                .setContent(content)
-                .setFromUser(username)
-                .setToUser(toUser);
-
-        sendMessage(msg);
+        if (userService.isFriends(username,toUser))
+        {
+            Message msg = new Message()
+                    .setContent(content)
+                    .setFromUser(username)
+                    .setToUser(toUser)
+                    .setType(Message.MESSAGE);
+            sendMessage(msg);
+        }
+        else
+        {
+            log.info("非好友关系，请先添加对方为好友");
+            Message msg = new Message()
+                    .setFromUser("系统提醒")
+                    .setToUser(username)
+                    .setContent("您与该用户当前非好友关系，请先添加该用户为好友后再发送消息")
+                    .setType(Message.NOTICE);
+            sendMessage(msg);
+        }
     }
 
     @OnError
@@ -90,7 +116,7 @@ public class P2PController
      * @param msg Message对象实例
      * @throws IOException
      */
-    protected static void sendMessage(Message msg) throws IOException
+    public static void sendMessage(Message msg) throws IOException
     {
         String JsonString = JSON.toJSONString(msg);
         String toUser = msg.getToUser();
@@ -110,7 +136,7 @@ public class P2PController
         {
             Session session = onLineMap.get(toUser);
             session.getBasicRemote().sendText(JsonString);
-            log.info("用户在线,消息已发送给用户"+toUser+"内容为："+msg.getContent()+",消息来自："+msg.getFromUser());
+            log.info("用户在线,消息已发送给用户"+toUser+"内容为："+msg.getContent()+",消息来自："+msg.getFromUser()+"类型为："+msg.getType());
         }
         else
         {

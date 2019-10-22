@@ -18,7 +18,7 @@ public interface UserService
      * @param username2
      * @return
      */
-    Integer addFriend(@Param("username1") String username1,@Param("username2") String username2);
+    Boolean addFriend(@Param("username1") String username1,@Param("username2") String username2);
 
     /**
      * 解除好友关系
@@ -26,5 +26,13 @@ public interface UserService
      * @param username2
      * @return
      */
-    Integer removeFriend(@Param("username1") String username1,@Param("username2") String username2);
+    Boolean removeFriend(@Param("username1") String username1,@Param("username2") String username2);
+
+    /**
+     * 判断是否为好友
+     * @param username1
+     * @param username2
+     * @return
+     */
+    Boolean isFriends(@Param("username1") String username1,@Param("username2") String username2);
 }

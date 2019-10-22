@@ -16,6 +16,7 @@
             border-left: 1px solid #CCCCCC;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 </head>
 <body>
     <div id="chat">
@@ -28,6 +29,10 @@
     内容为：<input type="text" id="content" disabled>
     <br>
     <button id="btn" onclick="send()" disabled>发送</button>
+    <br>
+
+    添加：<input type="text" id="friend">为好友<br>
+    <button onclick="addFriend()">添加点此</button>
 </body>
 <script>
     var webSocket;
@@ -69,6 +74,21 @@
         p.style.wordWrap = 'break-word';
         p.appendChild(document.createTextNode("你对"+toUser+"说： "+content));
         document.getElementById("chat").appendChild(p);
+    }
+    
+    function addFriend() {
+        $.ajax({
+            type:"post",
+            url:"http://localhost:8080/protected/user/addFriend",
+            dataType:"json",
+            data:{
+                "friend":document.getElementById('friend').value,
+                "username":username
+            },
+            success:function (res) {
+                alert(res.message)
+            }
+        })
     }
 
 </script>
