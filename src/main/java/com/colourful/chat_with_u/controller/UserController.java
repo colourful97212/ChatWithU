@@ -5,7 +5,6 @@ import com.colourful.chat_with_u.service.UserService;
 import com.colourful.chat_with_u.utils.JsonResult;
 import com.colourful.chat_with_u.vo.Message;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,11 +20,12 @@ public class UserController
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/user/test",method = RequestMethod.GET)
-    public String gg(){
-        return "Hello user";
-    }
-
+    /**
+     * 注册
+     * @param username
+     * @param password
+     * @return
+     */
     @RequestMapping(value = "/register",method = RequestMethod.POST)
     public JsonResult register(@RequestParam("username") String username, @RequestParam("password") String password)
     {
@@ -50,25 +50,44 @@ public class UserController
         }
     }
 
+    /**
+     * 添加好友
+     * @param username  发起请求用户
+     * @param friend    被请求用户
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/protected/user/addFriend",method = RequestMethod.POST)
     public JsonResult addFriend(@RequestParam("username") String username, @RequestParam("friend") String friend) throws IOException
     {
-        Message msg = new Message()
-                .setToUser(friend)
-                .setFromUser(username)
-                .setContent(username+"请求添加您为好友")
-                .setType(Message.FRIEND_REQUEST);
-        P2PController.sendMessage(msg);
-/*        msg.setToUser(username)
-                .setFromUser("系统提醒")
-                .setContent("好友请求已发送给"+friend)
-                .setType(Message.MESSAGE);
-        P2PController.sendMessage(msg);*/
-        return new JsonResult()
-                .setMessage("好友请求已发送给"+friend)
-                .setCode(200);
+        if (userService.isFriends(username,friend))
+        {
+            return new JsonResult()
+                    .setMessage("您与"+friend+"已是好友请勿重复添加")
+                    .setCode(200);
+        }
+       else
+        {
+            Message msg = new Message()
+                    .setToUser(friend)
+                    .setFromUser(username)
+                    .setContent(username+"请求添加您为好友")
+                    .setType(Message.FRIEND_REQUEST);
+            P2PController.sendMessage(msg);
+            return new JsonResult()
+                    .setMessage("好友请求已发送给"+friend)
+                    .setCode(200);
+        }
     }
 
+    /**
+     * 用户是否同意好友请求
+     * @param username  被请求用户
+     * @param who   发起好哟请求用户
+     * @param isTrue    被请求用户是否同意好友请求
+     * @return JsonResult
+     * @throws IOException sendMessage抛出的异常
+     */
     @RequestMapping(value = "/protected/user/responseRequest",method = RequestMethod.POST)
     public JsonResult responseRequest(@RequestParam("username")String username,
                                       @RequestParam("who") String who,
