@@ -28,7 +28,7 @@ public class VipController
         {
             System.out.println(user.getUsername());
         }*/
-        Integer row = userDao.removeFriend("root","阿起");
+        Integer row = userDao.addFriend("root","阿起");
         System.out.println(row);
     }
 }

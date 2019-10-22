@@ -23,11 +23,11 @@ public class ChatWithUApplicationTests {
 
     @Test
     public void gg(){
-/*        List<User> list = userDao.findFriends("root");
+        List<User> list = userDao.findFriends("root");
         for (User user : list)
         {
             System.out.println(user.getUsername());
-        }*/
+        }
 
     }
 }
