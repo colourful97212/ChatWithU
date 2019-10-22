@@ -29,17 +29,12 @@ public class P2PController
     {
         P2PController.userService = userService;
     }
-
     private static int onLineCount = 0;//在线人数
-
     //concurrent包的线程安全Map，用来存放每个客户端对应的MyWebSocket对象。
     //用户上线后，保存用户在线的Session，若此map中找不到用户的用户名和sesion说明该用户未上线
     protected static ConcurrentHashMap<String , Session> onLineMap = new ConcurrentHashMap<>();
-
     private static ConcurrentHashMap<String , CopyOnWriteArrayList<String>> outLineMessageMap = new ConcurrentHashMap<>();
-
     private Session session; // 与某个客户端的连接会话，需要通过它来给客户端发送数据
-
     private String username;
 
     @OnOpen
