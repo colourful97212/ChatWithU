@@ -42,4 +42,16 @@
         (SELECT id FROM user WHERE username = #{username1}) AND userId2 = (SELECT id FROM user WHERE username = #{username2})
         )
     </delete>
+    
+    <select id="isFriend" resultType="java.lang.Integer">
+        SELECT count(*) FROM friends WHERE
+        (
+        userId2 =
+        (SELECT id FROM user WHERE username = #{username1}) AND userId1 = (SELECT id FROM user WHERE username = #{username2})
+        )
+        OR
+        (userId1 =
+        (SELECT id FROM user WHERE username = #{username1}) AND userId2 = (SELECT id FROM user WHERE username = #{username2})
+        )
+    </select>
 </mapper>

@@ -51,4 +51,12 @@ public interface UserDao
      * @return 返回受影响的行数
      */
     Integer removeFriend(@Param("username1") String username1,@Param("username2") String username2);
+
+    /**
+     * 判断两人是否是好友
+     * @param username1 俩个用户
+     * @param username2 俩个用户
+     * @return 返回布尔值
+     */
+    Integer isFriend(@Param("username1") String username1,@Param("username2") String username2 );
 }
