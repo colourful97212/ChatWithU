@@ -5,7 +5,12 @@ import com.colourful.chat_with_u.service.UserService;
 import com.colourful.chat_with_u.vo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -52,6 +57,7 @@ public class UserServiceImpl implements UserService
      * @return
      */
     @Override
+    @CachePut(value = "friends" , key = "#username1")
     public Boolean addFriend(String username1, String username2)
     {
         int row;
@@ -79,11 +85,13 @@ public class UserServiceImpl implements UserService
 
     /**
      *删除好友
-     * @param username1
-     * @param username2
+     * @param username1 用户
+     * @param username2 好友
      * @return
      */
     @Override
+    @CacheEvict(value = "friends" ,key = "#username1")
+    //@CacheEvict 从缓存friends中删除key为username2 的数据
     public Boolean removeFriend(String username1, String username2)
     {
         int row;
@@ -119,6 +127,20 @@ public class UserServiceImpl implements UserService
     public Boolean isFriends(String username1, String username2)
     {
         return userDao.isFriend(username1, username2) != 0;
+    }
+
+    /**
+     * 找朋友
+     * @param username
+     * @return
+     */
+    @Override
+    @Cacheable(value = "friends" ,key = "#username")
+    //@CachePut缓存新增的或更新的数据到缓存,其中缓存名字是 friends 。数据的key是username
+    public List<String> findFriends(String username)
+    {
+        System.out.println("只执行一次");
+        return userDao.findFriends(username);
     }
 
 

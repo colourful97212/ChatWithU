@@ -2,6 +2,8 @@ package com.colourful.chat_with_u.service;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface UserService
 {
     /**
@@ -35,4 +37,11 @@ public interface UserService
      * @return
      */
     Boolean isFriends(@Param("username1") String username1,@Param("username2") String username2);
+
+    /**
+     * 找朋友
+     * @param username
+     * @return
+     */
+    List<String> findFriends(@Param("username") String username);
 }
