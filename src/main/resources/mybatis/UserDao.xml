@@ -14,8 +14,8 @@
         SELECT * FROM user
     </select>
 
-    <select id="findFriends" resultType="com.colourful.chat_with_u.vo.User">
-        SELECT * FROM user WHERE id IN
+    <select id="findFriends" resultType="java.lang.String">
+        SELECT username FROM user WHERE id IN
         (
           SELECT userId2 FROM friends WHERE userId1 = ( SELECT id FROM user WHERE username = #{username} )
         UNION

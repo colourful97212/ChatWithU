@@ -1,6 +1,7 @@
 package com.colourful.chat_with_u.controller;
 
 import com.colourful.chat_with_u.controller.webscoketcontroller.P2PController;
+import com.colourful.chat_with_u.dao.UserDao;
 import com.colourful.chat_with_u.service.UserService;
 import com.colourful.chat_with_u.utils.JsonResult;
 import com.colourful.chat_with_u.vo.Message;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -19,6 +21,8 @@ public class UserController
 {
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserDao userDao;
 
     /**
      * 注册
@@ -134,6 +138,55 @@ public class UserController
             return new JsonResult()
                     .setCode(200)
                     .setMessage("您已拒绝"+who+"的好友请求");
+        }
+    }
+
+    /**
+     * 查该用户好友列表
+     * @param username  用户名
+     * @return
+     */
+    @RequestMapping(value = "/protected/user/friendsList",method = RequestMethod.POST)
+    public JsonResult<Object> friendsList(@RequestParam("username") String username)
+    {
+        List<String> list = userDao.findFriends(username);
+        return new JsonResult<>()
+                .setCode(200)
+                .setMessage("Success")
+                .setData(list);
+    }
+
+    /**
+     * 删除好友
+     * @param username  用户名
+     * @param friend    要删除好友关系的用户
+     * @return
+     */
+    @RequestMapping(value = "/protected/user/removeFriend",method = RequestMethod.GET)
+    public JsonResult removeFriend(@RequestParam("username") String username,
+                                   @RequestParam("friend") String friend)
+    {
+        if (!userService.isFriends(username,friend))
+        {
+            return new JsonResult()
+                    .setMessage("您与"+friend+"并不是好友关系无需删除好友")
+                    .setCode(200);
+        }
+        else
+        {
+            int row = userDao.removeFriend(username,friend);
+            if (row == 1)
+            {
+                return new JsonResult()
+                        .setMessage("您已成功删除"+friend)
+                        .setCode(200);
+            }
+            else
+            {
+                return new JsonResult()
+                        .setMessage("删除失败，请稍后尝试")
+                        .setCode(200);
+            }
         }
     }
 }

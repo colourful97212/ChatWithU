@@ -34,7 +34,7 @@ public interface UserDao
      * @param username 需要查找朋友的用户
      * @return 返回查到的所有用户
      */
-    List<User> findFriends(@Param("username") String username);
+    List<String> findFriends(@Param("username") String username);
 
     /**
      * 添加两位用户的好友关系
