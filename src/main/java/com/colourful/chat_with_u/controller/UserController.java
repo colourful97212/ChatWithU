@@ -146,10 +146,10 @@ public class UserController
      * @param username  用户名
      * @return
      */
-    @RequestMapping(value = "/protected/user/friendsList",method = RequestMethod.GET)
+    @RequestMapping(value = "/protected/user/friendsList",method = RequestMethod.POST)
     public JsonResult<Object> friendsList(@RequestParam("username") String username)
     {
-        List<String> list = userService.findFriends(username);
+        List<String> list = userDao.findFriends(username);
         return new JsonResult<>()
                 .setCode(200)
                 .setMessage("Success")
