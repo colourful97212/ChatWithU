@@ -1,4 +1,3 @@
-/*
 package com.colourful.chat_with_u;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -12,4 +11,3 @@ public class StartForTomcat extends SpringBootServletInitializer
         return builder.sources(ChatWithUApplication.class);
     }
 }
-*/
