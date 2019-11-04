@@ -148,7 +148,7 @@ public class UserController
      * @param username  用户名
      * @return
      */
-    @RequestMapping(value = "/protected/user/friendsList",method = RequestMethod.POST)
+    @RequestMapping(value = "/protected/user/friendsList",method = RequestMethod.GET)
     public JsonResult<Object> friendsList(@RequestParam("username") String username)
     {
         List<String> list = userService.cacheFriends(username);
@@ -158,6 +158,17 @@ public class UserController
                 .setMessage("Success")
                 .setData(list);
     }
+
+/*    @RequestMapping(value = "/protected/user/test",method = RequestMethod.GET)
+    public JsonResult<Object> updata(@RequestParam("username") String username)
+    {
+        List<String> list = userService.updateFriends(username);
+        System.out.println("Controller被请求一次");
+        return new JsonResult<>()
+                .setCode(200)
+                .setMessage("Success")
+                .setData(list);
+    }*/
 
     /**
      * 删除好友
