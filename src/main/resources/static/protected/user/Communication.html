@@ -17,6 +17,7 @@
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 </head>
 <body>
     <div id="chat">
@@ -31,12 +32,48 @@
     <button id="btn" onclick="send()" disabled>发送</button>
     <br>
 
-    添加：<input type="text" id="friend" disabled>为好友<br>
+    添加：<input type="text" id="friendList" disabled>为好友<br>
     <button id="add_friend_btn" onclick="addFriend()" disabled>添加点此</button>
+
+    <table>
+        <tr id="friends">
+            <td></td>
+        </tr>
+    </table>
 </body>
 <script>
     var webSocket;
     var username = localStorage.getItem("username");
+
+/*    window.onload = function () {
+        console.log(app.data.Friends)
+       /!* app.methods.requ(username)*!/
+    };*/
+
+    var app = new Vue({
+        el:"friendList",
+        data:{
+            Friends:[]
+        },
+        created:function(){
+            this.requ(username);
+            console.log(this.Friends);
+        },
+        methods:{
+            requ:function (name) {
+                $.ajax({
+                    url:"http://localhost:8080/protected/user/friendsList",
+                    type:"post",
+                    dataType:"json",
+                    data:{
+                        username:name
+                    },
+                    function succ
+                })
+            }
+        }
+    });
+
     function connect() {
         webSocket = new WebSocket('ws://localhost:8080/websocket/'+username);
         webSocket.onopen = function () {
