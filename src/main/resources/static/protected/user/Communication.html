@@ -36,22 +36,26 @@
     <button id="add_friend_btn" onclick="addFriend()" disabled>添加点此</button>
     <table>
         <tr id="friendList">
-            <td></td>
+            <td v-for="(item, index) in friends" :key="index">{{ item }}</td>
         </tr>
     </table>
 </body>
 <script>
     var webSocket;
+    var resG = {};
     var username = localStorage.getItem("username");
 
     var app = new Vue({
         el:"#friendList",
         data:{
-            friends:[]
+            friends:[],
+            friends2:{}
         },
-        created:function () {
+        mounted:function () {
             this.FriendsList();
-            console.log(this.friends)
+            this.$nextTick(()=>{
+                console.log("Hello")
+            })
         },
         methods:{
             FriendsList:function () {
@@ -62,10 +66,12 @@
                     data:{
                         username:username
                     },
-                    success:(res) => {
-                        this.friends = res.data;
-                        console.log(res.data)
+                    success:function (res) {//(res)=>{   //  function (res) {
+                        console.log(res);
+                        this.friends = res.data
                     }
+                }).then(()=>{
+                    console.log(this.friends)
                 })
             }
         }
