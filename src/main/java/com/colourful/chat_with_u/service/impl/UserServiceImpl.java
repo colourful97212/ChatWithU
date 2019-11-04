@@ -5,7 +5,11 @@ import com.colourful.chat_with_u.service.UserService;
 import com.colourful.chat_with_u.vo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -62,6 +66,8 @@ public class UserServiceImpl implements UserService
             if (row == 1)
             {
                 log.info("添加好友关系成功");
+                updateFriends(username1);
+                updateFriends(username2);//更新好友列表缓存
                 return true;
             }
             else
@@ -94,6 +100,8 @@ public class UserServiceImpl implements UserService
             if (row == 1)
             {
                 log.info("解除好友关系成功");
+                updateFriends(username1);
+                updateFriends(username2);//更新好友列表缓存
                 return true;
             }
             else
@@ -121,5 +129,28 @@ public class UserServiceImpl implements UserService
         return userDao.isFriend(username1, username2) != 0;
     }
 
+    @Override
+    @Cacheable(value = "friends", key = "#username")//有key之后不会再执行Service代码
+    //执行一次
+    //Controller被请求一次
+    //Controller被请求一次
+    //Controller被请求一次
+    public List<String> cacheFriends(String username)
+    {
+        System.out.println("执行一次");
+        return userDao.findFriends(username);
+    }
+
+    /**
+     * 强制更新缓存起来的用户好友列表
+     * @param username
+     * @return
+     */
+    @CachePut(value = "friends", key = "#username")
+    public List<String> updateFriends(String username)
+    {
+        System.out.println("更新"+username+"的好友列表");
+        return userDao.findFriends(username);
+    }
 
 }

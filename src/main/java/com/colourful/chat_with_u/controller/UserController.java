@@ -108,6 +108,8 @@ public class UserController
                         .setToUser(who)
                         .setFromUser(username);
                 P2PController.sendMessage(msg);
+                userService.updateFriends(username);
+                userService.updateFriends(who);
                 return new JsonResult()
                         .setCode(200)
                         .setMessage("您已成功添加"+who+"为好友");
@@ -146,15 +148,27 @@ public class UserController
      * @param username  用户名
      * @return
      */
-    @RequestMapping(value = "/protected/user/friendsList",method = RequestMethod.POST)
+    @RequestMapping(value = "/protected/user/friendsList",method = RequestMethod.GET)
     public JsonResult<Object> friendsList(@RequestParam("username") String username)
     {
-        List<String> list = userDao.findFriends(username);
+        List<String> list = userService.cacheFriends(username);
+        System.out.println("Controller被请求一次");
         return new JsonResult<>()
                 .setCode(200)
                 .setMessage("Success")
                 .setData(list);
     }
+
+/*    @RequestMapping(value = "/protected/user/test",method = RequestMethod.GET)
+    public JsonResult<Object> updata(@RequestParam("username") String username)
+    {
+        List<String> list = userService.updateFriends(username);
+        System.out.println("Controller被请求一次");
+        return new JsonResult<>()
+                .setCode(200)
+                .setMessage("Success")
+                .setData(list);
+    }*/
 
     /**
      * 删除好友
@@ -177,6 +191,8 @@ public class UserController
             int row = userDao.removeFriend(username,friend);
             if (row == 1)
             {
+                userService.updateFriends(username);
+                userService.updateFriends(friend);
                 return new JsonResult()
                         .setMessage("您已成功删除"+friend)
                         .setCode(200);
