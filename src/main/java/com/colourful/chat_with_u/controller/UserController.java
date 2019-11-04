@@ -148,7 +148,7 @@ public class UserController
      * @param username  用户名
      * @return
      */
-    @RequestMapping(value = "/protected/user/friendsList",method = RequestMethod.GET)
+    @RequestMapping(value = "/protected/user/friendsList",method = RequestMethod.POST)
     public JsonResult<Object> friendsList(@RequestParam("username") String username)
     {
         List<String> list = userService.cacheFriends(username);
