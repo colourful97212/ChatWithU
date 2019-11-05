@@ -36,13 +36,12 @@
 <button disabled id="add_friend_btn" onclick="addFriend()">添加点此</button>
 <table>
     <tr id="friendList">
-        <td :key="index" v-for="(item, index) in friends">{{ item }}</td>
+        <td v-for="item in friends">{{ item }}</td><!--:key="index"  index) -->
     </tr>
 </table>
 </body>
 <script>
     var webSocket;
-    var resG = {};
     var username = localStorage.getItem("username");
 
     var app = new Vue({
@@ -63,12 +62,13 @@
                     data: {
                         username: username
                     },
-                    success: (res) => {  //(res)=>{   //  function (res) {
-                        console.log(res);
-                        this.friends = res.data
+                    success: (res) => {  //(res)=>{   //  function (res) {  用箭头函数解决this作用域的问题
+                        this.friends = res.data;         //将res.data数组赋值给friends数组 遍历时使用    v-for="item in friends" 遍历item
+                        this.friends2 = res;            //将res对象赋值给friends2大对象  遍历使用 v-for="item in friends2.data" 遍历item
                     }
-                }).then(() => {
+                }).then(()=>{
                     console.log(this.friends)
+                    console.log(this.friends2)
                 })
             }
         }
@@ -117,7 +117,10 @@
                 isTrue: isTrue
             },
             success: function (res) {
-
+                if (isTrue)//如果服务端用户好友列表发送变化时通知服务器及时更新服务端缓存中的好友列表
+                {
+                    app.FriendsList();
+                }
             }
         })
     }
