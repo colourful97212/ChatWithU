@@ -64,6 +64,13 @@ public class UserController
     @RequestMapping(value = "/protected/user/addFriend",method = RequestMethod.POST)
     public JsonResult addFriend(@RequestParam("username") String username, @RequestParam("friend") String friend) throws IOException
     {
+        if (userDao.findByUsername(friend) == null)
+        {
+            log.info("用户"+friend+"不存在");
+            return new JsonResult()
+                    .setCode(200)
+                    .setMessage("用户名"+friend+"不存在，请您查证后添加正确用户");
+        }
         if (userService.isFriends(username,friend))
         {
             return new JsonResult()

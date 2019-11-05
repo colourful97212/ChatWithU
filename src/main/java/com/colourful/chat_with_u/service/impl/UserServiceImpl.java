@@ -20,6 +20,7 @@ public class UserServiceImpl implements UserService
 
     /**
      * 注册
+     *
      * @param username
      * @param password
      * @return
@@ -29,14 +30,15 @@ public class UserServiceImpl implements UserService
     {
         int row;
         User user = userDao.findByUsername(username);
-        if (user != null){
+        if (user != null)
+        {
             row = 2;
             return row;
         }
-        row = userDao.addUser(username,password);
+        row = userDao.addUser(username, password);
         if (row == 1)
         {
-            log.info("注册成功 :{}",user);
+            log.info("注册成功 :{}", user);
         }
         else if (row == 0)
         {
@@ -51,6 +53,7 @@ public class UserServiceImpl implements UserService
 
     /**
      * 添加好友
+     *
      * @param username1
      * @param username2
      * @return
@@ -59,10 +62,10 @@ public class UserServiceImpl implements UserService
     public Boolean addFriend(String username1, String username2)
     {
         int row;
-        if(!isFriends(username1,username2))
+        if (!isFriends(username1, username2))
         {
-            log.info(username1+"与"+username2+"非好友关系");
-            row = userDao.addFriend(username1,username2);
+            log.info(username1 + "与" + username2 + "非好友关系");
+            row = userDao.addFriend(username1, username2);
             if (row == 1)
             {
                 log.info("添加好友关系成功");
@@ -78,13 +81,14 @@ public class UserServiceImpl implements UserService
         }
         else
         {
-            log.info(username1+"与"+username2+"已经是好友关系，不可重复添加好友关系");
+            log.info(username1 + "与" + username2 + "已经是好友关系，不可重复添加好友关系");
             return false;
         }
     }
 
     /**
-     *删除好友
+     * 删除好友
+     *
      * @param username1
      * @param username2
      * @return
@@ -93,10 +97,10 @@ public class UserServiceImpl implements UserService
     public Boolean removeFriend(String username1, String username2)
     {
         int row;
-        if(isFriends(username1,username2))
+        if (isFriends(username1, username2))
         {
-            log.info(username1+"与"+username2+"是好友关系");
-            row = userDao.removeFriend(username1,username2);
+            log.info(username1 + "与" + username2 + "是好友关系");
+            row = userDao.removeFriend(username1, username2);
             if (row == 1)
             {
                 log.info("解除好友关系成功");
@@ -112,13 +116,14 @@ public class UserServiceImpl implements UserService
         }
         else
         {
-            log.info(username1+"与"+username2+"非好友关系，不可解除非好友关系");
+            log.info(username1 + "与" + username2 + "非好友关系，不可解除非好友关系");
             return false;
         }
     }
 
     /**
      * 是否为好友关系
+     *
      * @param username1
      * @param username2
      * @return
@@ -143,13 +148,14 @@ public class UserServiceImpl implements UserService
 
     /**
      * 强制更新缓存起来的用户好友列表
+     *
      * @param username
      * @return
      */
     @CachePut(value = "friends", key = "#username")
     public List<String> updateFriends(String username)
     {
-        System.out.println("更新"+username+"的好友列表");
+        System.out.println("更新" + username + "的好友列表");
         return userDao.findFriends(username);
     }
 
