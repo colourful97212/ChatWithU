@@ -34,9 +34,14 @@
 
 添加：<input disabled id="friend" type="text">为好友<br>
 <button disabled id="add_friend_btn" onclick="addFriend()">添加点此</button>
-<table>
-    <tr id="friendList">
-        <td v-for="item in friends">{{ item }}</td><!--:key="index"  index) -->
+<table id="friendList">
+    <tr v-for="item in friends">
+        <td>
+            <a onclick="" type="button">{{ item }}</a>
+            <a @click="removeFriend(item)" href="javascript:void (0)">删除好友</a>
+            <a @click="" href="javascript:void (0)">发送消息</a>
+            <a @click="" href="javascript:void (0)">详细信息</a>
+        </td><!--:key="index"  index) -->
     </tr>
 </table>
 </body>
@@ -66,10 +71,31 @@
                         this.friends = res.data;         //将res.data数组赋值给friends数组 遍历时使用    v-for="item in friends" 遍历item
                         this.friends2 = res;            //将res对象赋值给friends2大对象  遍历使用 v-for="item in friends2.data" 遍历item
                     }
-                }).then(()=>{
-                    console.log(this.friends)
+                }).then(() => {
+                    console.log(this.friends);
                     console.log(this.friends2)
                 })
+            },
+            removeFriend: function (friendName) {
+                var r = confirm("您确定要删除好友" + friendName + "嘛？");
+                if (r) {
+                    $.ajax({
+                        url: "http://localhost:8080/protected/user/removeFriend",
+                        type: "post",
+                        dataType: 'json',
+                        data: {
+                            username: username,
+                            friend: friendName
+                        },
+                        success: (res) => {
+                            if (res.data)
+                            {
+                                app.FriendsList();
+                            }
+                            alert(res.message)
+                        }
+                    })
+                }
             }
         }
     });
@@ -154,6 +180,7 @@
             }
         })
     }
+
 
 </script>
 </html>

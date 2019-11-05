@@ -149,12 +149,12 @@ public class UserController
      * @param friend   要删除好友关系的用户
      * @return
      */
-    @RequestMapping(value = "/protected/user/removeFriend", method = RequestMethod.GET)
-    public JsonResult removeFriend(@RequestParam("username") String username, @RequestParam("friend") String friend)
+    @RequestMapping(value = "/protected/user/removeFriend", method = RequestMethod.POST)
+    public JsonResult<Boolean> removeFriend(@RequestParam("username") String username, @RequestParam("friend") String friend)
     {
         if (!userService.isFriends(username, friend))
         {
-            return new JsonResult().setMessage("您与" + friend + "并不是好友关系无需删除好友").setCode(200);
+            return new JsonResult<Boolean>().setMessage("您与" + friend + "并不是好友关系无需删除好友").setCode(200).setData(false);
         }
         else
         {
@@ -163,11 +163,11 @@ public class UserController
             {
                 userService.updateFriends(username);
                 userService.updateFriends(friend);
-                return new JsonResult().setMessage("您已成功删除" + friend).setCode(200);
+                return new JsonResult<Boolean>().setMessage("您已成功删除" + friend).setCode(200).setData(true);
             }
             else
             {
-                return new JsonResult().setMessage("删除失败，请稍后尝试").setCode(200);
+                return new JsonResult<Boolean>().setMessage("删除失败，请稍后尝试").setCode(200).setData(false);
             }
         }
     }
