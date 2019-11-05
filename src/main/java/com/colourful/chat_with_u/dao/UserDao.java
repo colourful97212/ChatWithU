@@ -1,6 +1,7 @@
 package com.colourful.chat_with_u.dao;
 
 import com.colourful.chat_with_u.vo.User;
+import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -59,4 +60,7 @@ public interface UserDao
      * @return 返回布尔值
      */
     Integer isFriend(@Param("username1") String username1,@Param("username2") String username2 );
+
+    //TODO:模糊查询
+    List<User> findLikeUser(@Param("String_1") String String_1);
 }

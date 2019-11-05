@@ -39,7 +39,7 @@
         <td>
             <a onclick="" type="button">{{ item }}</a>
             <a @click="removeFriend(item)" href="javascript:void (0)">删除好友</a>
-            <a @click="" href="javascript:void (0)">发送消息</a>
+            <a @click="sendTo(item)" href="javascript:void (0)">发送消息</a>
             <a @click="" href="javascript:void (0)">详细信息</a>
         </td><!--:key="index"  index) -->
     </tr>
@@ -96,6 +96,9 @@
                         }
                     })
                 }
+            },
+            sendTo: function (item) {
+                document.getElementById("toUser").value = item
             }
         }
     });
