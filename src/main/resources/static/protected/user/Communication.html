@@ -20,25 +20,25 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
-    <div id="chat">
-    </div>
-    <button id="on" onclick="connect()">上线</button>
-    <a class="button" href="/logout">登出</a></body>
-    <br>
-    发送给：<input disabled id="toUser" type="text">
-    <br>
-    内容为：<input disabled id="content" type="text">
-    <br>
-    <button disabled id="btn" onclick="send()">发送</button>
-    <br>
+<div id="chat">
+</div>
+<button id="on" onclick="connect()">上线</button>
+<a class="button" href="/logout">登出</a></body>
+<br>
+发送给：<input disabled id="toUser" type="text">
+<br>
+内容为：<input disabled id="content" type="text">
+<br>
+<button disabled id="btn" onclick="send()">发送</button>
+<br>
 
-    添加：<input disabled id="friend" type="text">为好友<br>
-    <button disabled id="add_friend_btn" onclick="addFriend()">添加点此</button>
-    <table>
-        <tr id="friendList">
-            <td :key="index" v-for="(item, index) in friends">{{ item }}</td>
-        </tr>
-    </table>
+添加：<input disabled id="friend" type="text">为好友<br>
+<button disabled id="add_friend_btn" onclick="addFriend()">添加点此</button>
+<table>
+    <tr id="friendList">
+        <td :key="index" v-for="(item, index) in friends">{{ item }}</td>
+    </tr>
+</table>
 </body>
 <script>
     var webSocket;
@@ -46,31 +46,28 @@
     var username = localStorage.getItem("username");
 
     var app = new Vue({
-        el:"#friendList",
-        data:{
-            friends:[],
-            friends2:{}
+        el: "#friendList",
+        data: {
+            friends: [],
+            friends2: {}
         },
-        mounted:function () {
+        mounted: function () {
             this.FriendsList();
-            this.$nextTick(()=>{
-                console.log("Hello")
-            })
         },
-        methods:{
-            FriendsList:function () {
+        methods: {
+            FriendsList: function () {
                 $.ajax({
-                    url:"http://localhost:8080/protected/user/friendsList",
-                    type:"post",
-                    dataType:"json",
-                    data:{
-                        username:username
+                    url: "http://localhost:8080/protected/user/friendsList",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        username: username
                     },
-                    success:function (res) {//(res)=>{   //  function (res) {
+                    success: (res) => {  //(res)=>{   //  function (res) {
                         console.log(res);
                         this.friends = res.data
                     }
-                }).then(()=>{
+                }).then(() => {
                     console.log(this.friends)
                 })
             }
@@ -78,7 +75,7 @@
     });
 
     function connect() {
-        webSocket = new WebSocket('ws://localhost:8080/websocket/'+username);
+        webSocket = new WebSocket('ws://localhost:8080/websocket/' + username);
         webSocket.onopen = function () {
             document.getElementById("toUser").disabled = false;
             document.getElementById("content").disabled = false;
@@ -95,36 +92,31 @@
         };
         webSocket.onmessage = function (message) {
             var jsonObj = JSON.parse(message.data);
-            if (jsonObj.type === 1)
-            {
+            if (jsonObj.type === 1) {
                 var p = document.createElement('p');
                 p.style.wordWrap = 'break-word';
-                p.appendChild(document.createTextNode(jsonObj.fromUser+"对你说： "+jsonObj.content));
+                p.appendChild(document.createTextNode(jsonObj.fromUser + "对你说： " + jsonObj.content));
                 document.getElementById("chat").appendChild(p);
-            }
-            else if (jsonObj.type === 2 || jsonObj.type ===4)
-            {
-                alert("系统通知："+jsonObj.content)
-            }
-            else if (jsonObj.type === 3)
-            {
+            } else if (jsonObj.type === 2 || jsonObj.type === 4) {
+                alert("系统通知：" + jsonObj.content)
+            } else if (jsonObj.type === 3) {
                 var isTrue = confirm(jsonObj.content);
-                friendAjax(jsonObj.fromUser , isTrue)
+                friendAjax(jsonObj.fromUser, isTrue)
             }
         }
     }
 
-    function friendAjax(who , isTrue) {
+    function friendAjax(who, isTrue) {
         $.ajax({
-            type:"post",
-            url:"http://localhost:8080/protected/user/responseRequest",
-            dataType:"json",
-            data:{
-                username:username,
-                who:who,
-                isTrue:isTrue
+            type: "post",
+            url: "http://localhost:8080/protected/user/responseRequest",
+            dataType: "json",
+            data: {
+                username: username,
+                who: who,
+                isTrue: isTrue
             },
-            success:function (res) {
+            success: function (res) {
 
             }
         })
@@ -134,27 +126,27 @@
         var content = document.getElementById("content").value;
         var toUser = document.getElementById("toUser").value;
         var data = {
-            "content" : content,
-            "toUser" : toUser
+            "content": content,
+            "toUser": toUser
         };
         document.getElementById("content").value = "";
         webSocket.send(JSON.stringify(data));
         var p = document.createElement('p');
         p.style.wordWrap = 'break-word';
-        p.appendChild(document.createTextNode("你对"+toUser+"说： "+content));
+        p.appendChild(document.createTextNode("你对" + toUser + "说： " + content));
         document.getElementById("chat").appendChild(p);
     }
-    
+
     function addFriend() {
         $.ajax({
-            type:"post",
-            url:"http://localhost:8080/protected/user/addFriend",
-            dataType:"json",
-            data:{
-                "friend":document.getElementById('friend').value,
-                "username":username
+            type: "post",
+            url: "http://localhost:8080/protected/user/addFriend",
+            dataType: "json",
+            data: {
+                "friend": document.getElementById('friend').value,
+                "username": username
             },
-            success:function (res) {
+            success: function (res) {
                 alert(res.message)
             }
         })
