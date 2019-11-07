@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService
         {
             log.info(username1 + "与" + username2 + "是好友关系");
             row = userDao.removeFriend(username1, username2);
-            if (row == 1)
+            if (row >= 1)
             {
                 log.info("解除好友关系成功");
                 updateFriends(username1);
