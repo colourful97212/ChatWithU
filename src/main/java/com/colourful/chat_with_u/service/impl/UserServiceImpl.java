@@ -97,6 +97,7 @@ public class UserServiceImpl implements UserService
     public Boolean removeFriend(String username1, String username2)
     {
         int row;
+                    // 3139.42
         if (isFriends(username1, username2))
         {
             log.info(username1 + "与" + username2 + "是好友关系");
